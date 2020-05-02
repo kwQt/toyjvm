@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"io/ioutil"
@@ -19,9 +20,37 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	parseClassFile(data)
+	cf := classFile{}
+	cf.parseClassFile(data)
 }
 
-func parseClassFile(data []byte) {
+type bytesReader struct {
+	data   []byte
+	curIdx int
+}
+
+func (cf *classFile) parseClassFile(data []byte) {
+	reader := bytesReader{data, 0}
+	cf.magic = reader.readMagic()
 	fmt.Println(hex.Dump(data))
+}
+
+func (r *bytesReader) readMagic() uint32 {
+	magic := r.readUnit32()
+	if magic != 0xCAFEBABE {
+		panic("Loaded File is not Java Class File")
+	}
+	return magic
+}
+
+func (r *bytesReader) readUnit16() uint16 {
+	result := binary.BigEndian.Uint16(r.data[r.curIdx : r.curIdx+2])
+	r.curIdx += 2
+	return result
+}
+
+func (r *bytesReader) readUnit32() uint32 {
+	result := binary.BigEndian.Uint32(r.data[r.curIdx : r.curIdx+4])
+	r.curIdx += 4
+	return result
 }
