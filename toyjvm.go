@@ -33,6 +33,8 @@ func (cf *classFile) parseClassFile(data []byte) {
 	cf.magic = reader.readMagic()
 	cf.minorVersion = reader.readUnit16()
 	cf.majorVersion = reader.readUnit16()
+	cf.constantPoolCount = reader.readUnit16()
+	cf.constantPool = reader.readConstantPool(int(cf.constantPoolCount))
 }
 
 func (r *bytesReader) readMagic() uint32 {
@@ -41,6 +43,56 @@ func (r *bytesReader) readMagic() uint32 {
 		panic("Loaded File is not Java Class File")
 	}
 	return magic
+}
+
+func (r *bytesReader) readConstantPool(cpCount int) []constantInfo {
+	constantPool := []constantInfo{}
+
+	for i := 0; i < cpCount-1; i++ {
+		tag := r.readUnit8()
+		next := r.readConstantInfo(tag)
+		constantPool = append(constantPool, next)
+	}
+
+	return constantPool
+}
+
+func (r *bytesReader) readConstantInfo(tag uint8) constantInfo {
+	var info interface{}
+
+	switch tag {
+	case CONSTANT_Utf8:
+	case CONSTANT_Integer:
+	case CONSTANT_Float:
+	case CONSTANT_Long:
+	case CONSTANT_Double:
+	case CONSTANT_Class:
+	case CONSTANT_String:
+	case CONSTANT_Fieldref:
+	case CONSTANT_Methodref:
+	case CONSTANT_InterfaceMethodref:
+	case CONSTANT_NameAndType:
+	case CONSTANT_MethodHandle:
+	case CONSTANT_MethodType:
+	case CONSTANT_Dynamic:
+	case CONSTANT_InvokeDynamic:
+	case CONSTANT_Module:
+	case CONSTANT_Package:
+	}
+
+	return constantInfo{tag, info}
+}
+
+func (r *bytesReader) readBytes(num int) []byte {
+	result := r.data[r.curIdx : r.curIdx+num]
+	r.curIdx += num
+	return result
+}
+
+func (r *bytesReader) readUnit8() uint8 {
+	result := r.data[r.curIdx]
+	r.curIdx++
+	return result
 }
 
 func (r *bytesReader) readUnit16() uint16 {
