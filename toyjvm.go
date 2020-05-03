@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/binary"
-	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -32,7 +31,8 @@ type bytesReader struct {
 func (cf *classFile) parseClassFile(data []byte) {
 	reader := bytesReader{data, 0}
 	cf.magic = reader.readMagic()
-	fmt.Println(hex.Dump(data))
+	cf.minorVersion = reader.readUnit16()
+	cf.majorVersion = reader.readUnit16()
 }
 
 func (r *bytesReader) readMagic() uint32 {
