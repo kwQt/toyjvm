@@ -46,15 +46,15 @@ func (r *bytesReader) readMagic() uint32 {
 }
 
 func (r *bytesReader) readConstantPool(cpCount int) []constantInfo {
-	constantPool := []constantInfo{}
+	cpTable := make([]constantInfo, cpCount)
 
-	for i := 0; i < cpCount-1; i++ {
+	for i := 1; i < cpCount; i++ {
 		tag := r.readUnit8()
 		next := r.readConstantInfo(tag)
-		constantPool = append(constantPool, next)
+		cpTable[i] = next
 	}
 
-	return constantPool
+	return cpTable
 }
 
 func (r *bytesReader) readConstantInfo(tag uint8) constantInfo {
