@@ -50,8 +50,7 @@ func (r *bytesReader) readConstantPool(cpCount int) []constantInfo {
 
 	for i := 1; i < cpCount; i++ {
 		tag := r.readUnit8()
-		next := r.readConstantInfo(tag)
-		cpTable[i] = next
+		cpTable[i] = r.readConstantInfo(tag)
 	}
 
 	return cpTable
@@ -62,16 +61,32 @@ func (r *bytesReader) readConstantInfo(tag uint8) constantInfo {
 
 	switch tag {
 	case CONSTANT_Utf8:
+		length := r.readUnit16()
+		bytes := r.readBytes(int(length))
+		info = CONSTANT_Utf8_info{tag, length, bytes}
 	case CONSTANT_Integer:
 	case CONSTANT_Float:
 	case CONSTANT_Long:
 	case CONSTANT_Double:
 	case CONSTANT_Class:
+		nameIndex := r.readUnit16()
+		info = CONSTANT_Class_info{tag, nameIndex}
 	case CONSTANT_String:
+		stringIndex := r.readUnit16()
+		info = CONSTANT_String_info{tag, stringIndex}
 	case CONSTANT_Fieldref:
+		classIndex := r.readUnit16()
+		nameAndTypeIndex := r.readUnit16()
+		info = CONSTANT_Fieldref_info{tag, classIndex, nameAndTypeIndex}
 	case CONSTANT_Methodref:
+		classIndex := r.readUnit16()
+		nameAndTypeIndex := r.readUnit16()
+		info = CONSTANT_Methodref_info{tag, classIndex, nameAndTypeIndex}
 	case CONSTANT_InterfaceMethodref:
 	case CONSTANT_NameAndType:
+		nameIndex := r.readUnit16()
+		descriptorIndex := r.readUnit16()
+		info = CONSTANT_NameAndType_info{tag, nameIndex, descriptorIndex}
 	case CONSTANT_MethodHandle:
 	case CONSTANT_MethodType:
 	case CONSTANT_Dynamic:
