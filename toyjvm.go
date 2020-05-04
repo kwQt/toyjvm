@@ -66,30 +66,30 @@ func (r *bytesReader) readConstantInfo(tag uint8) constantInfo {
 	case CONSTANT_Utf8:
 		length := r.readUnit16()
 		bytes := r.readBytes(int(length))
-		info = CONSTANT_Utf8_info{tag, length, bytes}
+		info = CONSTANT_Utf8_info{length, bytes}
 	case CONSTANT_Integer:
 	case CONSTANT_Float:
 	case CONSTANT_Long:
 	case CONSTANT_Double:
 	case CONSTANT_Class:
 		nameIndex := r.readUnit16()
-		info = CONSTANT_Class_info{tag, nameIndex}
+		info = CONSTANT_Class_info{nameIndex}
 	case CONSTANT_String:
 		stringIndex := r.readUnit16()
-		info = CONSTANT_String_info{tag, stringIndex}
+		info = CONSTANT_String_info{stringIndex}
 	case CONSTANT_Fieldref:
 		classIndex := r.readUnit16()
 		nameAndTypeIndex := r.readUnit16()
-		info = CONSTANT_Fieldref_info{tag, classIndex, nameAndTypeIndex}
+		info = CONSTANT_Fieldref_info{classIndex, nameAndTypeIndex}
 	case CONSTANT_Methodref:
 		classIndex := r.readUnit16()
 		nameAndTypeIndex := r.readUnit16()
-		info = CONSTANT_Methodref_info{tag, classIndex, nameAndTypeIndex}
+		info = CONSTANT_Methodref_info{classIndex, nameAndTypeIndex}
 	case CONSTANT_InterfaceMethodref:
 	case CONSTANT_NameAndType:
 		nameIndex := r.readUnit16()
 		descriptorIndex := r.readUnit16()
-		info = CONSTANT_NameAndType_info{tag, nameIndex, descriptorIndex}
+		info = CONSTANT_NameAndType_info{nameIndex, descriptorIndex}
 	case CONSTANT_MethodHandle:
 	case CONSTANT_MethodType:
 	case CONSTANT_Dynamic:

@@ -45,35 +45,29 @@ const (
 )
 
 type CONSTANT_Utf8_info struct {
-	tag    uint8
 	length uint16
 	bytes  []byte
 }
 
 type CONSTANT_Class_info struct {
-	tag       uint8
 	nameIndex uint16
 }
 
 type CONSTANT_String_info struct {
-	tag         uint8
 	stringIndex uint16
 }
 
 type CONSTANT_Fieldref_info struct {
-	tag              uint8
 	classIndex       uint16
 	nameAndTypeIndex uint16
 }
 
 type CONSTANT_Methodref_info struct {
-	tag              uint8
 	classIndex       uint16
 	nameAndTypeIndex uint16
 }
 
 type CONSTANT_NameAndType_info struct {
-	tag             uint8
 	nameIndex       uint16
 	descriptorIndex uint16
 }
