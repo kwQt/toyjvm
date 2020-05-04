@@ -23,23 +23,23 @@ func main() {
 	cf.parseClassFile(data)
 }
 
-type bytesReader struct {
-	data   []byte
-	curIdx int
-}
-
 func (cf *classFile) parseClassFile(data []byte) {
-	reader := bytesReader{data, 0}
+	reader := bytesReader{data, 0, nil}
 	cf.magic = reader.readMagic()
 	cf.minorVersion = reader.readUnit16()
 	cf.majorVersion = reader.readUnit16()
 	cf.constantPoolCount = reader.readUnit16()
 	cf.constantPool = reader.readConstantPool(int(cf.constantPoolCount))
+	reader.cp = cf.constantPool
 	cf.accessFlags = reader.readUnit16()
 	cf.thisClass = reader.readUnit16()
 	cf.superClass = reader.readUnit16()
 	cf.interfacesCount = reader.readUnit16()
 	cf.interfaces = reader.readInterfaces(int(cf.interfacesCount))
+type bytesReader struct {
+	data   []byte
+	curIdx int
+	cp     []constantInfo
 }
 
 func (r *bytesReader) readMagic() uint32 {
