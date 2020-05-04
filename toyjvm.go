@@ -36,6 +36,14 @@ func (cf *classFile) parseClassFile(data []byte) {
 	cf.superClass = reader.readUnit16()
 	cf.interfacesCount = reader.readUnit16()
 	cf.interfaces = reader.readInterfaces(int(cf.interfacesCount))
+	cf.fieldsCount = reader.readUnit16()
+	cf.fields = reader.readFields(int(cf.fieldsCount))
+	cf.methodsCount = reader.readUnit16()
+	cf.methods = reader.readMethods(int(cf.methodsCount))
+	cf.attributesCount = reader.readUnit16()
+	cf.attributes = reader.readAttributes(int(cf.attributesCount))
+}
+
 type bytesReader struct {
 	data   []byte
 	curIdx int
@@ -109,6 +117,90 @@ func (r *bytesReader) readInterfaces(count int) []uint16 {
 	return intefaces
 }
 
+func (r *bytesReader) readFields(count int) []fieldsInfo {
+	fields := make([]fieldsInfo, count)
+	for i := 0; i < count; i++ {
+		accessFlags := r.readUnit16()
+		nameIndex := r.readUnit16()
+		descriptorIndex := r.readUnit16()
+		attributesCount := r.readUnit16()
+		attributes := r.readAttributes(int(attributesCount))
+		fields[i] = fieldsInfo{accessFlags, nameIndex, descriptorIndex, attributesCount, attributes}
+	}
+	return fields
+}
+
+func (r *bytesReader) readMethods(count int) []methodsInfo {
+	methods := make([]methodsInfo, count)
+	for i := 0; i < count; i++ {
+		accessFlags := r.readUnit16()
+		nameIndex := r.readUnit16()
+		descriptorIndex := r.readUnit16()
+		attributesCount := r.readUnit16()
+		attributes := r.readAttributes(int(attributesCount))
+		methods[i] = methodsInfo{accessFlags, nameIndex, descriptorIndex, attributesCount, attributes}
+	}
+	return methods
+}
+
+func (r *bytesReader) readAttributes(count int) []attributeInfo {
+	attributes := make([]attributeInfo, count)
+	for i := 0; i < count; i++ {
+		attributes[i] = r.readAttributeInfo()
+	}
+	return attributes
+}
+
+func (r *bytesReader) readAttributeInfo() attributeInfo {
+	attributeNameIndex := r.readUnit16()
+	attributeLength := r.readUnit32()
+	var info interface{}
+	name := getUTF8(r.cp, attributeNameIndex)
+	switch name {
+	case Code:
+		info = r.readCodeAttribute()
+	case LineNumberTable:
+		info = r.readLinuNumberTableAttribute()
+	case SourceFile:
+		info = sourceFileAttribute{r.readUnit16()}
+	}
+	return attributeInfo{attributeNameIndex, attributeLength, info}
+}
+
+func (r *bytesReader) readCodeAttribute() codeAttribute {
+	maxStack := r.readUnit16()
+	maxLocal := r.readUnit16()
+	codeLength := r.readUnit32()
+	code := make([]uint8, codeLength)
+	for i := 0; i < int(codeLength); i++ {
+		code[i] = r.readUnit8()
+	}
+	exceptionTableLength := r.readUnit16()
+	table := make([]exceptionTable, exceptionTableLength)
+	for i := 0; i < int(exceptionTableLength); i++ {
+		startPC := r.readUnit16()
+		endPC := r.readUnit16()
+		headerPC := r.readUnit16()
+		catchType := r.readUnit16()
+		table[i] = exceptionTable{startPC, endPC, headerPC, catchType}
+	}
+
+	attributesCount := r.readUnit16()
+	attributes := r.readAttributes(int(attributesCount))
+
+	return codeAttribute{maxStack, maxLocal, codeLength, code, exceptionTableLength, table, attributesCount, attributes}
+}
+
+func (r *bytesReader) readLinuNumberTableAttribute() lineNumberTableAttribute {
+	lineNumberTableLength := r.readUnit16()
+	table := make([]lineNumberTable, lineNumberTableLength)
+	for i := 0; i < int(lineNumberTableLength); i++ {
+		startPC := r.readUnit16()
+		lineNumber := r.readUnit16()
+		table[i] = lineNumberTable{startPC, lineNumber}
+	}
+	return lineNumberTableAttribute{lineNumberTableLength, table}
+}
 
 func getUTF8(cp []constantInfo, cpIndex uint16) string {
 	if cpIndex == 0 {
