@@ -129,4 +129,5 @@ type sourceFileAttribute struct {
 const (
 	Code            = "Code"
 	LineNumberTable = "LineNumberTable"
+	SourceFile      = "SourceFile"
 )
