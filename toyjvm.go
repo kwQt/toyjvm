@@ -35,6 +35,11 @@ func (cf *classFile) parseClassFile(data []byte) {
 	cf.majorVersion = reader.readUnit16()
 	cf.constantPoolCount = reader.readUnit16()
 	cf.constantPool = reader.readConstantPool(int(cf.constantPoolCount))
+	cf.accessFlags = reader.readUnit16()
+	cf.thisClass = reader.readUnit16()
+	cf.superClass = reader.readUnit16()
+	cf.interfacesCount = reader.readUnit16()
+	cf.interfaces = reader.readInterfaces(int(cf.interfacesCount))
 }
 
 func (r *bytesReader) readMagic() uint32 {
@@ -47,12 +52,10 @@ func (r *bytesReader) readMagic() uint32 {
 
 func (r *bytesReader) readConstantPool(cpCount int) []constantInfo {
 	cpTable := make([]constantInfo, cpCount)
-
 	for i := 1; i < cpCount; i++ {
 		tag := r.readUnit8()
 		cpTable[i] = r.readConstantInfo(tag)
 	}
-
 	return cpTable
 }
 
@@ -96,6 +99,14 @@ func (r *bytesReader) readConstantInfo(tag uint8) constantInfo {
 	}
 
 	return constantInfo{tag, info}
+}
+
+func (r *bytesReader) readInterfaces(ifCount int) []uint16 {
+	intefaces := make([]uint16, ifCount)
+	for i := 0; i < ifCount; i++ {
+		intefaces[i] = r.readUnit16()
+	}
+	return intefaces
 }
 
 func (r *bytesReader) readBytes(num int) []byte {
