@@ -50,9 +50,9 @@ func (r *bytesReader) readMagic() uint32 {
 	return magic
 }
 
-func (r *bytesReader) readConstantPool(cpCount int) []constantInfo {
-	cpTable := make([]constantInfo, cpCount)
-	for i := 1; i < cpCount; i++ {
+func (r *bytesReader) readConstantPool(count int) []constantInfo {
+	cpTable := make([]constantInfo, count)
+	for i := 1; i < count; i++ {
 		tag := r.readUnit8()
 		cpTable[i] = r.readConstantInfo(tag)
 	}
@@ -101,12 +101,24 @@ func (r *bytesReader) readConstantInfo(tag uint8) constantInfo {
 	return constantInfo{tag, info}
 }
 
-func (r *bytesReader) readInterfaces(ifCount int) []uint16 {
-	intefaces := make([]uint16, ifCount)
-	for i := 0; i < ifCount; i++ {
+func (r *bytesReader) readInterfaces(count int) []uint16 {
+	intefaces := make([]uint16, count)
+	for i := 0; i < count; i++ {
 		intefaces[i] = r.readUnit16()
 	}
 	return intefaces
+}
+
+
+func getUTF8(cp []constantInfo, cpIndex uint16) string {
+	if cpIndex == 0 {
+		return ""
+	}
+	utf8Info, ok := cp[cpIndex].info.(CONSTANT_Utf8_info)
+	if !ok {
+		panic("can not get Constant_Utf8_info")
+	}
+	return string(utf8Info.bytes)
 }
 
 func (r *bytesReader) readBytes(num int) []byte {
