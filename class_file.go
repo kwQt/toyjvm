@@ -93,3 +93,40 @@ type attributeInfo struct {
 	attributeLength    uint32
 	info               interface{}
 }
+
+type codeAttribute struct {
+	maxStack             uint16
+	maxLocals            uint16
+	codeLength           uint32
+	code                 []uint8
+	exceptionTableLength uint16
+	exceptionTable       []exceptionTable
+	attributesCount      uint16
+	attributes           []attributeInfo
+}
+
+type exceptionTable struct {
+	startPC   uint16
+	endPC     uint16
+	headerPC  uint16
+	catchType uint16
+}
+
+type lineNumberTableAttribute struct {
+	lineNumberTableLength uint16
+	lineNumberTable       []lineNumberTable
+}
+
+type lineNumberTable struct {
+	startPC    uint16
+	lineNumber uint16
+}
+
+type sourceFileAttribute struct {
+	sourceFileIndex uint16
+}
+
+const (
+	Code            = "Code"
+	LineNumberTable = "LineNumberTable"
+)
