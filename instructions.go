@@ -4,7 +4,7 @@ const (
 	opLdc           = 0x12
 	opGetStatic     = 0xb2
 	opInvokevirtual = 0xb6
-	opReturn        = 0xac
+	opReturn        = 0xb1
 )
 
 type instruction interface {
