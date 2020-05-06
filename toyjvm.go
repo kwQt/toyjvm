@@ -25,6 +25,7 @@ func main() {
 
 func (cf *classFile) parseClassFile(data []byte) {
 	reader := bytesReader{data, 0, nil}
+
 	cf.magic = reader.readMagic()
 	cf.minorVersion = reader.readUnit16()
 	cf.majorVersion = reader.readUnit16()
@@ -42,6 +43,36 @@ func (cf *classFile) parseClassFile(data []byte) {
 	cf.methods = reader.readMethods(int(cf.methodsCount))
 	cf.attributesCount = reader.readUnit16()
 	cf.attributes = reader.readAttributes(int(cf.attributesCount))
+
+	cf.executeMain()
+}
+
+func (cf *classFile) executeMain() {
+	for _, methodInfo := range cf.methods {
+		name := getUTF8(cf.constantPool, methodInfo.nameIndex)
+		if name == "main" {
+			execute(methodInfo, cf)
+		}
+	}
+
+}
+
+func execute(method methodsInfo, cf *classFile) {
+	frameStack := frameStack{}
+	code := fetchCodeAttribute(method)
+	frame := frame{&frameStack, nil, []operand{}, []localVar{}, cf.constantPool, code}
+	frameStack.push(&frame)
+	frame.execute()
+}
+
+func fetchCodeAttribute(method methodsInfo) *codeAttribute {
+	for _, attribute := range method.attributes {
+		code, ok := attribute.info.(codeAttribute)
+		if ok {
+			return &code
+		}
+	}
+	return nil
 }
 
 type bytesReader struct {
