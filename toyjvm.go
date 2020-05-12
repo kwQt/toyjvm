@@ -21,6 +21,9 @@ func main() {
 	}
 	cf := classFile{}
 	cf.parseClassFile(data)
+
+	initBuiltin()
+	cf.executeMain()
 }
 
 func (cf *classFile) parseClassFile(data []byte) {
@@ -43,8 +46,6 @@ func (cf *classFile) parseClassFile(data []byte) {
 	cf.methods = reader.readMethods(int(cf.methodsCount))
 	cf.attributesCount = reader.readUnit16()
 	cf.attributes = reader.readAttributes(int(cf.attributesCount))
-
-	cf.executeMain()
 }
 
 func (cf *classFile) executeMain() {
