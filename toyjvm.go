@@ -54,13 +54,12 @@ func (cf *classFile) executeMain() {
 			execute(methodInfo, cf)
 		}
 	}
-
 }
 
 func execute(method methodsInfo, cf *classFile) {
-	frameStack := frameStack{}
+	frameStack := &frameStack{}
 	code := fetchCodeAttribute(method)
-	frame := frame{&frameStack, nil, []operand{}, []localVar{}, cf.constantPool, code}
+	frame := frame{frameStack, nil, &operandStack{}, &localVars{}, cf.constantPool, code}
 	frameStack.push(&frame)
 	frame.execute()
 }
@@ -233,17 +232,6 @@ func (r *bytesReader) readLinuNumberTableAttribute() lineNumberTableAttribute {
 	return lineNumberTableAttribute{lineNumberTableLength, table}
 }
 
-func getUTF8(cp []constantInfo, cpIndex uint16) string {
-	if cpIndex == 0 {
-		return ""
-	}
-	utf8Info, ok := cp[cpIndex].info.(CONSTANT_Utf8_info)
-	if !ok {
-		panic("can not get Constant_Utf8_info")
-	}
-	return string(utf8Info.bytes)
-}
-
 func (r *bytesReader) readBytes(num int) []byte {
 	result := r.data[r.curIdx : r.curIdx+num]
 	r.curIdx += num
@@ -266,4 +254,40 @@ func (r *bytesReader) readUnit32() uint32 {
 	result := binary.BigEndian.Uint32(r.data[r.curIdx : r.curIdx+4])
 	r.curIdx += 4
 	return result
+}
+
+func getUTF8(cp []constantInfo, cpIndex uint16) string {
+	if cpIndex == 0 {
+		return ""
+	}
+	utf8Info, ok := cp[cpIndex].info.(CONSTANT_Utf8_info)
+	if !ok {
+		panic("can not get Constant_Utf8_info")
+	}
+	return string(utf8Info.bytes)
+}
+
+func getClass(cp []constantInfo, cpIndex uint16) CONSTANT_Class_info {
+	info := cp[cpIndex].info.(CONSTANT_Class_info)
+	return info
+}
+
+func getString(cp []constantInfo, cpIndex uint8) CONSTANT_String_info {
+	info := cp[cpIndex].info.(CONSTANT_String_info)
+	return info
+}
+
+func getFieldRef(cp []constantInfo, cpIndex uint16) CONSTANT_Fieldref_info {
+	info := cp[cpIndex].info.(CONSTANT_Fieldref_info)
+	return info
+}
+
+func getMethodRef(cp []constantInfo, cpIndex uint16) CONSTANT_Methodref_info {
+	info := cp[cpIndex].info.(CONSTANT_Methodref_info)
+	return info
+}
+
+func getNameAndType(cp []constantInfo, cpIndex uint16) CONSTANT_NameAndType_info {
+	info := cp[cpIndex].info.(CONSTANT_NameAndType_info)
+	return info
 }
