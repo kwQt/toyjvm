@@ -5,15 +5,15 @@ type frameStack []frame
 type frame struct {
 	frameStack   *frameStack
 	prev         *frame
-	operandStack []operand
-	localVars    []localVar
+	operandStack *operandStack
+	localVars    *localVars
 	constantPool []constantInfo
 	code         *codeAttribute
 }
 
-type operand interface{}
+type operandStack []interface{}
 
-type localVar interface{}
+type localVars []interface{}
 
 func (fr *frame) execute() {
 	code := fr.code.code
@@ -27,6 +27,16 @@ func (fr *frame) execute() {
 		inst.fetchOperand(&reader)
 		inst.exec(fr)
 	}
+}
+
+func (stack *operandStack) pop() interface{} {
+	top := (*stack)[len(*stack)-1]
+	*stack = (*stack)[:len(*stack)-1]
+	return top
+}
+
+func (stack *operandStack) push(operand interface{}) {
+	*stack = append(*stack, operand)
 }
 
 func (stack *frameStack) push(fr *frame) {
