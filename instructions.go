@@ -35,8 +35,35 @@ type instruction interface {
 
 func decode(op uint8) instruction {
 	switch op {
+	case opBipush:
+		return &Bipush{}
+
 	case opLdc:
 		return &Ldc{}
+
+	case opIload1:
+		return &Iload1{}
+
+	case opIload2:
+		return &Iload2{}
+
+	case opIstore1:
+		return &Istore1{}
+
+	case opIstore2:
+		return &Istore2{}
+
+	case opIadd:
+		return &Iadd{}
+
+	case opIsub:
+		return &Isub{}
+
+	case opImul:
+		return &Imul{}
+
+	case opIdiv:
+		return &Idiv{}
 
 	case opGetStatic:
 		return &Getstatic{}
