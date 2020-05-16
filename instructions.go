@@ -120,6 +120,54 @@ func (inst *Istore2) exec(fr *frame) {
 	fr.localVars[2] = value
 }
 
+type Iadd struct {
+}
+
+func (inst *Iadd) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Iadd) exec(fr *frame) {
+	val1 := fr.operandStack.pop().(int)
+	val2 := fr.operandStack.pop().(int)
+	fr.operandStack.push(val2 + val1)
+}
+
+type Isub struct {
+}
+
+func (inst *Isub) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Isub) exec(fr *frame) {
+	val1 := fr.operandStack.pop().(int)
+	val2 := fr.operandStack.pop().(int)
+	fr.operandStack.push(val2 - val1)
+}
+
+type Imul struct {
+}
+
+func (inst *Imul) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Imul) exec(fr *frame) {
+	val1 := fr.operandStack.pop().(int)
+	val2 := fr.operandStack.pop().(int)
+	fr.operandStack.push(val2 * val1)
+}
+
+type Idiv struct {
+}
+
+func (inst *Idiv) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Idiv) exec(fr *frame) {
+	val1 := fr.operandStack.pop().(int)
+	val2 := fr.operandStack.pop().(int)
+	fr.operandStack.push(val2 / val1)
+}
+
 type Getstatic struct {
 	operand uint16
 }
