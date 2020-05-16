@@ -1,7 +1,28 @@
 package main
 
 const (
+	opIconst0       = 0x3
+	opIconst1       = 0x4
+	opIconst2       = 0x5
+	opIconst3       = 0x6
+	opIconst4       = 0x7
+	opIconst5       = 0x8
+	opBipush        = 0x10
 	opLdc           = 0x12
+	opIload         = 0x15
+	opIload0        = 0x1a
+	opIload1        = 0x1b
+	opIload2        = 0x1c
+	opIload3        = 0x1d
+	opIstore        = 0x36
+	opIstore0       = 0x3b
+	opIstore1       = 0x3c
+	opIstore2       = 0x3d
+	opIstore3       = 0x3e
+	opIadd          = 0x60
+	opIsub          = 0x64
+	opImul          = 0x68
+	opIdiv          = 0x6c
 	opGetStatic     = 0xb2
 	opInvokevirtual = 0xb6
 	opReturn        = 0xb1
