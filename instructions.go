@@ -51,6 +51,18 @@ func decode(op uint8) instruction {
 	return nil
 }
 
+type Bipush struct {
+	operand uint8
+}
+
+func (inst *Bipush) fetchOperand(r *bytesReader) {
+	inst.operand = r.readUnit8()
+}
+
+func (inst *Bipush) exec(fr *frame) {
+	fr.operandStack.push(int(inst.operand))
+}
+
 type Ldc struct {
 	operand uint8
 }
@@ -64,6 +76,48 @@ func (inst *Ldc) exec(fr *frame) {
 	index := getString(fr.constantPool, inst.operand).stringIndex
 	value := getUTF8(fr.constantPool, index)
 	fr.operandStack.push(value)
+}
+
+type Iload1 struct {
+}
+
+func (inst *Iload1) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Iload1) exec(fr *frame) {
+	fr.operandStack.push(fr.localVars[1])
+}
+
+type Iload2 struct {
+}
+
+func (inst *Iload2) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Iload2) exec(fr *frame) {
+	fr.operandStack.push(fr.localVars[2])
+}
+
+type Istore1 struct {
+}
+
+func (inst *Istore1) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Istore1) exec(fr *frame) {
+	value := fr.operandStack.pop().(int)
+	fr.localVars[1] = value
+}
+
+type Istore2 struct {
+}
+
+func (inst *Istore2) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Istore2) exec(fr *frame) {
+	value := fr.operandStack.pop()
+	fr.localVars[2] = value
 }
 
 type Getstatic struct {
