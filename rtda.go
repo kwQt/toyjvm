@@ -3,17 +3,15 @@ package main
 type frameStack []frame
 
 type frame struct {
-	frameStack   *frameStack
+	frameStack   frameStack
 	prev         *frame
-	operandStack *operandStack
-	localVars    *localVars
+	operandStack operandStack
+	localVars    []interface{}
 	constantPool []constantInfo
 	code         *codeAttribute
 }
 
 type operandStack []interface{}
-
-type localVars []interface{}
 
 func (fr *frame) execute() {
 	code := fr.code.code

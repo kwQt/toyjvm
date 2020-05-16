@@ -58,9 +58,10 @@ func (cf *classFile) executeMain() {
 }
 
 func execute(method methodsInfo, cf *classFile) {
-	frameStack := &frameStack{}
+	frameStack := frameStack{}
 	code := fetchCodeAttribute(method)
-	frame := frame{frameStack, nil, &operandStack{}, &localVars{}, cf.constantPool, code}
+	localvars := make([]interface{}, 100)
+	frame := frame{frameStack, nil, operandStack{}, localvars, cf.constantPool, code}
 	frameStack.push(&frame)
 	frame.execute()
 }

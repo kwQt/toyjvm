@@ -39,7 +39,7 @@ func (inst *Ldc) fetchOperand(r *bytesReader) {
 }
 
 func (inst *Ldc) exec(fr *frame) {
-	// need to consider Class and Method
+	// TODO: Consider Class and Method
 	index := getString(fr.constantPool, inst.operand).stringIndex
 	value := getUTF8(fr.constantPool, index)
 	fr.operandStack.push(value)
