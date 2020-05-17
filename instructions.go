@@ -65,11 +65,17 @@ func decode(op uint8) instruction {
 	case opIload2:
 		return &Iload2{}
 
+	case opIstore0:
+		return &Istore0{}
+
 	case opIstore1:
 		return &Istore1{}
 
 	case opIstore2:
 		return &Istore2{}
+
+	case opIstore3:
+		return &Istore3{}
 
 	case opIadd:
 		return &Iadd{}
@@ -203,6 +209,17 @@ func (inst *Iload2) exec(fr *frame) {
 	fr.operandStack.push(fr.localVars[2])
 }
 
+type Istore0 struct {
+}
+
+func (inst *Istore0) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Istore0) exec(fr *frame) {
+	value := fr.operandStack.pop()
+	fr.localVars[0] = value
+}
+
 type Istore1 struct {
 }
 
@@ -223,6 +240,17 @@ func (inst *Istore2) fetchOperand(r *bytesReader) {
 func (inst *Istore2) exec(fr *frame) {
 	value := fr.operandStack.pop()
 	fr.localVars[2] = value
+}
+
+type Istore3 struct {
+}
+
+func (inst *Istore3) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Istore3) exec(fr *frame) {
+	value := fr.operandStack.pop()
+	fr.localVars[3] = value
 }
 
 type Iadd struct {
