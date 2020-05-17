@@ -35,6 +35,24 @@ type instruction interface {
 
 func decode(op uint8) instruction {
 	switch op {
+	case opIconst0:
+		return &Iconst0{}
+
+	case opIconst1:
+		return &Iconst1{}
+
+	case opIconst2:
+		return &Iconst2{}
+
+	case opIconst3:
+		return &Iconst3{}
+
+	case opIconst4:
+		return &Iconst4{}
+
+	case opIconst5:
+		return &Iconst5{}
+
 	case opBipush:
 		return &Bipush{}
 
@@ -76,6 +94,66 @@ func decode(op uint8) instruction {
 	}
 
 	return nil
+}
+
+type Iconst0 struct {
+}
+
+func (inst *Iconst0) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Iconst0) exec(fr *frame) {
+	fr.operandStack.push(0)
+}
+
+type Iconst1 struct {
+}
+
+func (inst *Iconst1) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Iconst1) exec(fr *frame) {
+	fr.operandStack.push(1)
+}
+
+type Iconst2 struct {
+}
+
+func (inst *Iconst2) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Iconst2) exec(fr *frame) {
+	fr.operandStack.push(2)
+}
+
+type Iconst3 struct {
+}
+
+func (inst *Iconst3) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Iconst3) exec(fr *frame) {
+	fr.operandStack.push(3)
+}
+
+type Iconst4 struct {
+}
+
+func (inst *Iconst4) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Iconst4) exec(fr *frame) {
+	fr.operandStack.push(4)
+}
+
+type Iconst5 struct {
+}
+
+func (inst *Iconst5) fetchOperand(r *bytesReader) {
+}
+
+func (inst *Iconst5) exec(fr *frame) {
+	fr.operandStack.push(5)
 }
 
 type Bipush struct {
