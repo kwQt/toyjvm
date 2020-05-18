@@ -99,7 +99,7 @@ func decode(op uint8) instruction {
 		return &Return{}
 	}
 
-	return nil
+	panic("opcode corresponding to instruction not implemented is decoded")
 }
 
 type Iconst0 struct {

@@ -9,10 +9,16 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("no class file path")
+		fmt.Println("no class file name")
 		return
 	}
-	path := os.Args[1]
+
+	if len(os.Args) > 2 {
+		fmt.Println("too many arguments")
+		return
+	}
+
+	path := os.Args[1] + ".class"
 
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
